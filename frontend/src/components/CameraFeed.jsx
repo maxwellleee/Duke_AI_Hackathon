@@ -45,8 +45,15 @@ export default function CameraFeed({ onLandmarksDetected, videoRef, isActive }) 
       // Draw hand landmarks if detected (canvas is transparent overlay)
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const landmarks = results.multiHandLandmarks[0];
+
+        // Determine handedness label if available
+        let handednessLabel = 'Unknown';
+        if (results.multiHandedness && results.multiHandedness.length > 0) {
+          // MediaPipe format: [{score:..., label: "Left"|"Right"}]
+          handednessLabel = results.multiHandedness[0].label || 'Unknown';
+        }
         
-        // Mirror landmarks for drawing (video is already mirrored)
+        // Mirror landmarks for drawing (video is already mirrored for the user)
         const mirroredLandmarks = landmarks.map(lm => ({
           ...lm,
           x: 1 - lm.x
@@ -65,9 +72,25 @@ export default function CameraFeed({ onLandmarksDetected, videoRef, isActive }) 
           radius: 3
         });
 
-        // Send original landmarks to parent component
+        // Build payload for parent with image size, handedness, and per-landmark visibility (defaulted)
         if (onLandmarksDetected) {
-          onLandmarksDetected(landmarks);
+          const safeWidth = video.videoWidth || canvas.width || 640;
+          const safeHeight = video.videoHeight || canvas.height || 480;
+          const payload = {
+            landmarks: landmarks.map(lm => ({
+              x: lm.x,
+              y: lm.y,
+              z: lm.z || 0,
+              v: 1.0 // MediaPipe hand landmarks in this usage don't provide per-landmark visibility; default to 1.0
+            })),
+            handedness: handednessLabel,
+            imageSize: {
+              width: safeWidth,
+              height: safeHeight
+            },
+            timestamp: Date.now()
+          };
+          onLandmarksDetected(payload);
         }
       }
 
@@ -157,4 +180,3 @@ export default function CameraFeed({ onLandmarksDetected, videoRef, isActive }) 
     </div>
   );
 }
-

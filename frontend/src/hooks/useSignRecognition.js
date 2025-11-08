@@ -14,7 +14,9 @@ export function useSignRecognition() {
   const THROTTLE_MS = 100; // Process every ~100ms (10fps)
   const FRAME_SKIP = 3; // Process every 3rd frame
 
-  const predictSign = useCallback(async (landmarks) => {
+  // landmarks: array of {x,y,z,v}
+  // meta: { handedness, imageSize: {width, height}, timestamp }
+  const predictSign = useCallback(async (landmarks, meta = {}) => {
     // Skip frames to reduce API calls
     frameCountRef.current++;
     if (frameCountRef.current % FRAME_SKIP !== 0) {
@@ -36,20 +38,26 @@ export function useSignRecognition() {
     setError(null);
 
     try {
+      // Build flattened landmarks for easier backend ingestion
+      const landmarks_flat = landmarks.flatMap(lm => [lm.x, lm.y, lm.z || 0]);
+
+      const body = {
+        frame_id: `${Date.now()}`,
+        timestamp: meta.timestamp || Date.now(),
+        image_size: meta.imageSize || { width: 640, height: 480 },
+        handedness: meta.handedness || 'Unknown',
+        hand_landmarks: {
+          landmarks: landmarks.map(lm => ({ x: lm.x, y: lm.y, z: lm.z || 0 })),
+          landmarks_flat
+        }
+      };
+
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          hand_landmarks: {
-            landmarks: landmarks.map(lm => ({
-              x: lm.x,
-              y: lm.y,
-              z: lm.z || 0
-            }))
-          }
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -57,6 +65,7 @@ export function useSignRecognition() {
       }
 
       const data = await response.json();
+      // Expect backend to return { predicted_sign: "A", confidence: 0.92 }
       setPrediction(data.predicted_sign);
       setConfidence(data.confidence);
     } catch (err) {
@@ -83,4 +92,3 @@ export function useSignRecognition() {
     reset
   };
 }
-
