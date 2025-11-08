@@ -1,5 +1,6 @@
 import React from "react";
 import "./HomePage.css";
+import logo from "../../../gesturify_logo.png";
 
 export default function HomePage({
   onSignIn,
@@ -11,7 +12,7 @@ export default function HomePage({
       {/* Header */}
       <header className="home-header">
         <div className="home-logo">
-          <div className="logo-icon">👋</div>
+          <img src={logo} alt="Gesturify logo" className="logo-img" />
           <span className="logo-text">Gesturify</span>
         </div>
         <button

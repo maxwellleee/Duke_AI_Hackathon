@@ -35,6 +35,13 @@
   margin-left: 10rem;
 }
 
+.logo-img {
+  height: 48px;
+  width: auto;
+  margin-left: 0.25rem;
+  margin-right: 0.5rem;
+}
+
 .logo-text {
   font-size: 1.75rem;
   font-weight: 700;
@@ -139,7 +146,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
