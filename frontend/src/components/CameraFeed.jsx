@@ -147,7 +147,7 @@ export default function CameraFeed({ onLandmarksDetected, videoRef, isActive }) 
   }, [isActive, onLandmarksDetected, videoRef]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '480px' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <video
         ref={videoRef}
         style={{
@@ -156,7 +156,7 @@ export default function CameraFeed({ onLandmarksDetected, videoRef, isActive }) 
           left: 0,
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
+          objectFit: 'contain',
           transform: 'scaleX(-1)', // Mirror for user
           zIndex: 1,
           backgroundColor: '#000'

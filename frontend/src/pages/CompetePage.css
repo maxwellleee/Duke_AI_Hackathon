@@ -1,0 +1,242 @@
+.compete-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.compete-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(20,61,145,0.08);
+}
+
+.compete-header h2 {
+  margin: 0;
+  color: #143d91; /* darker blue */
+}
+
+.compete-main {
+  display: grid;
+  grid-template-columns: 280px 1fr 180px;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.compete-leaderboard {
+  background: linear-gradient(180deg, #eef6ff 0%, #ffffff 100%);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
+.compete-leaderboard h3 {
+  margin-top: 0;
+  color: #0b1220;
+}
+
+.leader-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 6px;
+  border-radius: 8px;
+}
+
+.leader-entry + .leader-entry {
+  margin-top: 6px;
+}
+
+.leader-rank {
+  width: 28px;
+  font-weight: 700;
+  color: #143d91;
+}
+
+.leader-name {
+  flex: 1;
+  color: #0b1220;
+}
+
+.leader-time {
+  color: #64748b;
+  min-width: 60px;
+  text-align: right;
+}
+
+.compete-center {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+}
+
+.difficulty-box h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #143d91; /* darker blue for better contrast */
+}
+
+.difficulty-options {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.diff-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(20,61,145,0.08);
+  cursor: pointer;
+  color: #0f3b87; /* darker blue for label text */
+}
+
+.diff-option input {
+  pointer-events: auto;
+}
+
+.diff-option.active {
+  background: rgba(20,61,145,0.12);
+  border-color: rgba(20,61,145,0.2);
+  font-weight: 700;
+  color: #143d91;
+}
+
+.begin-box {
+  margin-top: 24px;
+}
+
+.btn-begin {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+/* right side placeholder for future widgets (no styles needed yet) */
+
+.compete-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+.compete-modal-inner {
+  background: white;
+  width: min(900px, 95vw);
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.compete-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(20,61,145,0.08);
+}
+.compete-modal-header h3 {
+  margin: 0;
+  color: #143d91; /* darker blue for the Spell header */
+}
+
+.compete-sequence-title {
+  color: #143d91; /* match Summary color */
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.sequence-progress {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.seq-letter {
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: #e6f0ff;
+  color: #0b1220;
+  font-weight: 900;
+  font-size: 1.6rem; /* much larger */
+  min-width: 56px;
+  text-align: center;
+}
+.seq-letter.done {
+  background: #064e3b; /* dark green background */
+  color: #ffffff; /* white text for contrast */
+  box-shadow: 0 10px 30px rgba(6,78,59,0.25);
+  transform: translateY(-4px);
+}
+.compete-modal-body {
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.compete-modal-body .camera-container {
+  width: 720px;
+  height: 540px; /* 4:3 aspect ratio */
+  max-width: calc(100vw - 80px);
+  max-height: calc(80vh - 160px);
+}
+
+/* disable animation/shake inside modal's prediction area */
+.compete-modal-body .prediction {
+  animation: none !important;
+  transform: none !important;
+}
+.compete-summary {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2,6,23,0.45);
+  z-index: 10010;
+}
+.compete-summary-inner {
+  background: white; /* keep background white */
+  color: #143d91; /* blue font */
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 320px;
+}
+
+.compete-summary-inner .btn-begin {
+  background: #143d91; /* blue button */
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.compete-summary-inner h3 {
+  margin-top: 0;
+  color: #143d91;
+}
+
+.compete-time {
+  color: #143d91; /* blue */
+  font-weight: 900;
+  font-size: 1.05rem;
+}

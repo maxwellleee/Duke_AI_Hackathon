@@ -143,6 +143,13 @@
   font-weight: 600;
 }
 
+/* learned state: green background to indicate mastered items */
+.module-word-item.learned {
+  background: rgba(34, 197, 94, 0.14); /* green-400 at low opacity */
+  color: #065f46; /* darker green text */
+  font-weight: 700;
+}
+
 .module-content {
   flex: 1;
   background: #ffffff;

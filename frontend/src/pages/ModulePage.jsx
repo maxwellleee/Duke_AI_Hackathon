@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ModulePage.css";
 import logo from "../../../gesturify_logo.png";
 // import letter images from src so they are bundled by Vite
@@ -6,6 +6,9 @@ import Aimg from "../letters/A.png";
 import Bimg from "../letters/B.png";
 import Cimg from "../letters/C.png";
 import Dimg from "../letters/D.png";
+import Eimg from "../letters/E.png";
+import Kimg from "../letters/K.png";
+import Uimg from "../letters/U.png";
 import SignRecognition from "../components/SignRecognition";
 
 const MODULE_CONTENT = {
@@ -48,17 +51,35 @@ const MODULE_CONTENT = {
 export default function ModulePage({ moduleId, onBack = null }) {
   const [selectedWord, setSelectedWord] = useState(null);
   const [showPractice, setShowPractice] = useState(false);
+  // learned is ephemeral and resets whenever this component mounts or module changes
+  const [learned, setLearned] = useState([]);
+
+  useEffect(() => {
+    // clear learned when moduleId changes (so letters don't persist across opens)
+    setLearned([]);
+  }, [moduleId]);
 
   const LETTER_IMAGES = {
     A: Aimg,
     B: Bimg,
     C: Cimg,
     D: Dimg,
+  E: Eimg,
+  K: Kimg,
+  U: Uimg,
   };
 
   const content = MODULE_CONTENT[moduleId] || {
     title: moduleId || "Module",
     words: [],
+  };
+
+  // helper to mark a letter/word as learned and persist
+  const markLearned = (word) => {
+    if (!word || word.length !== 1) return;
+    const upper = word.toUpperCase();
+    if (learned.includes(upper)) return;
+    setLearned((prev) => [...prev, upper]);
   };
 
   // compute preview image source when a word is selected
@@ -100,7 +121,7 @@ export default function ModulePage({ moduleId, onBack = null }) {
                 key={w}
                 className={`module-word-item ${
                   selectedWord === w ? "selected" : ""
-                }`}
+                } ${learned.includes(String(w).toUpperCase()) ? 'learned' : ''}`}
                 onClick={() => setSelectedWord(w)}
               >
                 {w}
@@ -177,7 +198,15 @@ export default function ModulePage({ moduleId, onBack = null }) {
                   </div>
                 </div>
                 <div style={{ marginTop: 12 }}>
-                  <SignRecognition targetSign={selectedWord} />
+                  <SignRecognition
+                    targetSign={selectedWord}
+                    onCorrect={() => {
+                      /* mark learned when a correct/passed result occurs */
+                      if (moduleId === 'letters' && selectedWord && selectedWord.length === 1) {
+                        markLearned(selectedWord);
+                      }
+                    }}
+                  />
                 </div>
               </div>
             </div>

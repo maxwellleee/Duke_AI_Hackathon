@@ -4,7 +4,7 @@ import { useSignRecognition } from '../hooks/useSignRecognition';
 import CameraFeed from './CameraFeed';
 import './SignRecognition.css';
 
-export default function SignRecognition({ targetSign = null, onCorrect = null }) {
+export default function SignRecognition({ targetSign = null, onCorrect = null, autoStart = false, onControlsReady = null }) {
   const { videoRef, startCamera, stopCamera, isActive, error: cameraError } = useCamera();
   const { prediction, confidence, isProcessing, error: recognitionError, predictSign, reset } = useSignRecognition();
   const [isCorrect, setIsCorrect] = useState(false);
@@ -25,6 +25,13 @@ export default function SignRecognition({ targetSign = null, onCorrect = null })
       setIsCorrect(false);
     }
   }, [prediction, targetSign, onCorrect]);
+
+  // If scoring result indicates a pass, notify parent to mark as learned
+  useEffect(() => {
+    if (attemptResult && attemptResult.passed && onCorrect) {
+      onCorrect();
+    }
+  }, [attemptResult, onCorrect]);
 
   const handleLandmarksDetected = useCallback((data) => {
     // data: { landmarks, handedness, imageSize, timestamp }
@@ -50,6 +57,33 @@ export default function SignRecognition({ targetSign = null, onCorrect = null })
     setIsCorrect(false);
     setAttemptResult(null);
   };
+
+  // auto-start camera when requested (useful for modal flows)
+  useEffect(() => {
+    if (!autoStart) return;
+    // start camera and reset recognition state
+    reset();
+    setIsCorrect(false);
+    setAttemptResult(null);
+    startCamera();
+    return () => {
+      stopCamera();
+      reset();
+      setIsCorrect(false);
+      setAttemptResult(null);
+    };
+  }, [autoStart, reset, startCamera, stopCamera]);
+
+  // expose controls to parent if requested
+  useEffect(() => {
+    if (onControlsReady) {
+      try {
+        onControlsReady({ startCamera, stopCamera, isActive, cameraError });
+      } catch (e) {
+        console.warn('onControlsReady callback threw', e);
+      }
+    }
+  }, [onControlsReady, startCamera, stopCamera, isActive, cameraError]);
 
   // Score a single-frame attempt against /api/attempts using the current targetSign
   const evaluateAttempt = async () => {
@@ -103,13 +137,12 @@ export default function SignRecognition({ targetSign = null, onCorrect = null })
   return (
     <div className="sign-recognition">
       <div className="camera-container">
-        {isActive ? (
-          <CameraFeed
-            videoRef={videoRef}
-            onLandmarksDetected={handleLandmarksDetected}
-            isActive={isActive}
-          />
-        ) : (
+        <CameraFeed
+          videoRef={videoRef}
+          onLandmarksDetected={handleLandmarksDetected}
+          isActive={isActive}
+        />
+        {!isActive && (
           <div className="camera-placeholder">
             <p>Click "Start Camera" to begin</p>
           </div>
@@ -141,11 +174,6 @@ export default function SignRecognition({ targetSign = null, onCorrect = null })
           </div>
         )}
 
-        {isProcessing && (
-          <div className="processing">
-            <p>Processing...</p>
-          </div>
-        )}
 
         {prediction && (
           <div className={`prediction ${isCorrect ? 'correct' : ''}`}>

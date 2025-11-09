@@ -9,6 +9,15 @@ export function useCamera() {
     // Attach stream to video element when stream changes
     if (stream && videoRef.current) {
       videoRef.current.srcObject = stream;
+      // try to play; some browsers require play to be called on user gesture or after attach
+      videoRef.current.play().catch((err) => {
+        // try again shortly after in case element isn't ready
+        setTimeout(() => {
+          try {
+            if (videoRef.current) videoRef.current.play().catch(() => {});
+          } catch (e) {}
+        }, 200);
+      });
     }
     
     return () => {

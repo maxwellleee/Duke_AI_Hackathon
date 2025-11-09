@@ -10,7 +10,7 @@
 
 .camera-container {
   width: 100%;
-  max-width: 640px;
+  max-width: 720px; /* allow larger camera */
   aspect-ratio: 4/3;
   border: 2px solid #333;
   border-radius: 8px;
@@ -107,16 +107,9 @@
 .prediction.correct {
   border-color: #4CAF50;
   background: #e8f5e9;
-  animation: pulse 0.5s ease;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
+  /* disable pulsing to keep layout stable */
+  animation: none;
+  transform: none;
 }
 
 .prediction-sign h2 {
